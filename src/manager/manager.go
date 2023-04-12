@@ -32,6 +32,16 @@ func (m *Manager) GetTopicNames() []string {
 	return topics
 }
 
+// GetTopicNames returns a list of names of all created Topics.
+func (m *Manager) GetTopic(topicName string) (*topic.Topic[*message.Message], error) {
+	t, ok := m.topics[topicName]
+	if !ok {
+		return nil, fmt.Errorf(errTopicNotFound, topicName)
+	}
+
+	return t, nil
+}
+
 const (
 	errTopicAlreadyExists = "topic named '%s' already exists"
 	errTopicNotFound      = "topic named '%s' not found"
