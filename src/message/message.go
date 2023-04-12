@@ -7,14 +7,8 @@ type (
 	Message struct {
 		// Timestamp registers the time the message was Published
 		Timestamp *time.Time `json:"timestamp"`
-		Body      []byte     `json:"body"`
+		// Attr is a map of message Attributes.
+		Attr map[string]any `json:"attr"`
+		Body []byte         `json:"body"`
 	}
 )
-
-func (m Message) BodyBytes() []byte {
-	return m.Body
-}
-
-func (m Message) BodyString() string {
-	return string(m.Body)
-}
