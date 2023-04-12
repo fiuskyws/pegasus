@@ -2,6 +2,9 @@ package topic
 
 import "github.com/google/uuid"
 
+// TODO:
+//   - Implement Queue data structure in Topic
+//   - Add `Peek() T`  and `PeekAt(i uint) (*T)` methods
 type (
 	// Topic is a "named queue" that services can subscribe to.
 	Topic[T any] struct {
