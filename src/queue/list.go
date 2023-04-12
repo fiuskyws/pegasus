@@ -1,5 +1,8 @@
 package queue
 
+// TODO:
+//   - Improve current implementation, to be memory/concurrency/parallel safe.
+
 type (
 	// list is a linked-list data structure implementation.
 	list[T any] struct {

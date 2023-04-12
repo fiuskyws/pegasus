@@ -1,5 +1,8 @@
 package queue
 
+// TODO:
+//	- Improve current implementation, to be memory/concurrency/parallel safe.
+
 type (
 	// Queue is a linked-list data structure, that will be implemented
 	// instead of a common `chan` to allow us to peek.
