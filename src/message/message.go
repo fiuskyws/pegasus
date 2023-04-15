@@ -3,6 +3,8 @@ package message
 import (
 	"fmt"
 	"time"
+
+	"github.com/fiuskyws/pegasus/src/proto"
 )
 
 type (
@@ -26,4 +28,17 @@ func (m *Message) Validate() error {
 		return fmt.Errorf(errEmptyField, "topic_name")
 	}
 	return nil
+}
+
+func FromRequest(req *proto.SendRequest) (*Message, error) {
+	msg := Message{
+		Body:      []byte(req.Body),
+		TopicName: req.TopicName,
+	}
+
+	if err := msg.Validate(); err != nil {
+		return nil, err
+	}
+
+	return &msg, nil
 }
