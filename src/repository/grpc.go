@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/fiuskyws/pegasus/src/manager"
+	"github.com/fiuskyws/pegasus/src/message"
 	"github.com/fiuskyws/pegasus/src/proto"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
@@ -124,7 +125,7 @@ func (g *GRPCRepo) Pop(ctx context.Context, req *proto.PopRequest) (*proto.PopRe
 	case msg := <-msgChan:
 		return &proto.PopResponse{
 			TopicName: msg.TopicName,
-			Body:      msg.Body,
+			Body:      string(msg.Body),
 		}, nil
 	}
 }
