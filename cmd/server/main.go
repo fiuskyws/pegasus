@@ -23,6 +23,8 @@ func main() {
 		panic(err)
 	}
 
+	// TODO:
+	// 	- Remove this implementation, MUST NOT use `ReplaceGlobals`
 	undo := zap.ReplaceGlobals(l)
 	defer undo()
 
