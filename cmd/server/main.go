@@ -7,6 +7,7 @@ import (
 
 	"github.com/fiuskyws/pegasus/src/manager"
 	"github.com/fiuskyws/pegasus/src/server"
+	"go.uber.org/zap"
 )
 
 var (
@@ -17,6 +18,13 @@ var (
 )
 
 func main() {
+	l, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+
+	undo := zap.ReplaceGlobals(l)
+	defer undo()
 
 	exit := make(chan os.Signal, 1)
 
@@ -26,19 +34,21 @@ func main() {
 
 	for _, topic := range topics {
 		if err := m.NewTopic(topic); err != nil {
-			panic(err)
+			zap.L().Panic(err.Error())
 		}
 	}
 
 	g := server.NewGRPC(m)
 
-	if err := g.Start(port); err != nil {
-		panic(err)
-	}
+	go func() {
+		if err := g.Start(port); err != nil {
+			zap.L().Panic(err.Error())
+		}
+	}()
 
 	<-exit
 
 	if err := g.Close(); err != nil {
-		panic(err)
+		zap.L().Panic(err.Error())
 	}
 }
