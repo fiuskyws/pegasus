@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package proto;
+option go_package = "/proto";
+
+service Pegasus {
+  rpc CreateTopic(CreateTopicRequest) returns (CreateTopicResponse);
+  rpc GetTopics(GetTopicsRequest) returns (GetTopicsResponse);
+
+  rpc Send(SendRequest) returns (SendResponse);
+  rpc Pop(PopRequest) returns (PopResponse);
+
+  rpc Consumer(ConsumerRequest) returns (stream ConsumerResponse);
+  rpc Producer(stream ProducerRequest) returns (stream ProducerResponse);
+}
+
+message GetTopicsRequest {}
+message GetTopicsResponse {
+  repeated string topics = 1;
+}
+
+message CreateTopicRequest {
+  string name = 1;
+}
+
+message CreateTopicResponse {
+  string error = 1;
+}
+
+message ConsumerRequest {
+  string topic_name = 1;
+}
+
+message ConsumerResponse {
+  string topic_name = 1;
+  string body = 2;
+}
+
+message ProducerRequest {
+  string topic_name = 1;
+  string body = 2;
+}
+
+message ProducerResponse {
+  string message = 1;
+  string error = 2;
+}
+
+message SendRequest {
+  string topic_name = 1;
+  string body = 2;
+}
+
+message SendResponse {
+  string message = 1;
+  string error = 2;
+}
+
+message PopRequest {
+  string topic_name = 1;
+}
+
+message PopResponse {
+  string topic_name = 1;
+  string body = 2;
+  string error = 3;
+}
