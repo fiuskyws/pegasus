@@ -3,8 +3,6 @@ package message
 import (
 	"fmt"
 	"time"
-
-	"github.com/fiuskyws/pegasus/src/proto"
 )
 
 type (
@@ -15,7 +13,12 @@ type (
 		Timestamp *time.Time `json:"timestamp"`
 		// Attr is a map of message Attributes.
 		Attr map[string]any `json:"attr"`
-		Body []byte         `json:"body"`
+		Body string         `json:"body"`
+	}
+
+	requestAPI interface {
+		GetBody() string
+		GetTopicName() string
 	}
 )
 
@@ -30,10 +33,10 @@ func (m *Message) Validate() error {
 	return nil
 }
 
-func FromRequest(req *proto.SendRequest) (*Message, error) {
+func FromRequest[T requestAPI](req T) (*Message, error) {
 	msg := Message{
-		Body:      []byte(req.Body),
-		TopicName: req.TopicName,
+		Body:      req.GetBody(),
+		TopicName: req.GetTopicName(),
 	}
 
 	if err := msg.Validate(); err != nil {
