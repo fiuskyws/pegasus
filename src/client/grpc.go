@@ -27,6 +27,12 @@ func NewGRPC(target string) Client {
 	}
 }
 
+// TODO:
+//   - Implement a REAL Client, not just this $hit
+func (g *gRPC) GetClient() proto.PegasusClient {
+	return g.client
+}
+
 func (g *gRPC) Ping() error {
 	_, err := g.client.GetTopics(context.Background(), &proto.GetTopicsRequest{})
 	return err
