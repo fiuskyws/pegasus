@@ -3,7 +3,7 @@ Simple Message Broker service written in Go.
 
 ## TODO:
 
-### Alpha Release
+### POC Release 1
 - [x] Pub/Sub Logic
 - [x] Server
 - [x] Makefile:
