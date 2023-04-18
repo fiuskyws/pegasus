@@ -96,7 +96,7 @@ func TestSend(t *testing.T) {
 			m := NewManager()
 
 			actual := m.Send(&message.Message{
-				Body: []byte("body"),
+				Body: "body",
 			})
 
 			require.NotNil(actual)
@@ -120,7 +120,7 @@ func TestSend(t *testing.T) {
 
 		actual := m.Send(&message.Message{
 			TopicName: "some topic",
-			Body:      []byte("body"),
+			Body:      "body",
 		})
 
 		require.NotNil(actual)
@@ -138,7 +138,7 @@ func TestSend(t *testing.T) {
 		{
 			actual := m.Send(&message.Message{
 				TopicName: "wrong_topic",
-				Body:      []byte("body"),
+				Body:      "body",
 			})
 
 			require.NotNil(actual)
@@ -157,7 +157,7 @@ func TestSend(t *testing.T) {
 		{
 			actual := m.Send(&message.Message{
 				TopicName: "topic",
-				Body:      []byte("body"),
+				Body:      "body",
 			})
 
 			require.Nil(actual)
@@ -205,7 +205,7 @@ func TestPop(t *testing.T) {
 		{
 			err := m.Send(&message.Message{
 				TopicName: "topic",
-				Body:      []byte("body"),
+				Body:      "body",
 			})
 
 			require.Nil(err)

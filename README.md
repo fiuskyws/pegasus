@@ -3,10 +3,9 @@ Simple Message Broker service written in Go.
 
 ## TODO:
 - [ ] Alpha release:
-    - [ ] Pub/Sub Logic
-    - [ ] Client/Server
-    - [ ] Makefile:
-        - [ ] `run`
-        - [ ] `test`
-        - [ ] `build`
+    - [x] Pub/Sub Logic
+    - [x] Client/Server
+    - [x] Makefile:
+        - [x] `run`
+        - [x] `test`
     - [ ] Test Coverage > 50%
