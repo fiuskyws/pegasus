@@ -131,11 +131,101 @@ func (g *GRPCRepo) Pop(ctx context.Context, req *proto.PopRequest) (*proto.PopRe
 }
 
 // Consumer -
-func (g *GRPCRepo) Consumer(in *proto.ConsumerRequest, srv proto.Pegasus_ConsumerServer) error {
-	return nil
+func (g *GRPCRepo) Consumer(req *proto.ConsumerRequest, srv proto.Pegasus_ConsumerServer) error {
+	msgChan := make(chan *message.Message, 1)
+	errChan := make(chan error, 1)
+
+	go func() {
+		exit := false
+		for !exit {
+			msg, err := g.mgr.Pop(req.TopicName)
+			if err != nil {
+				errChan <- err
+				exit = true
+				return
+			}
+			msgChan <- msg
+		}
+	}()
+
+	for {
+		select {
+		case <-srv.Context().Done():
+			if err := srv.Context().Err(); err != nil {
+				zap.L().Error(err.Error())
+				return err
+			}
+			return nil
+		case err := <-errChan:
+			zap.L().Error(err.Error())
+			return err
+		case msg := <-msgChan:
+			resp := proto.ConsumerResponse{
+				TopicName: msg.TopicName,
+				Body:      string(msg.Body),
+			}
+			if err := srv.Send(&resp); err != nil {
+				zap.L().Error(err.Error())
+				return err
+			}
+		}
+	}
 }
 
 // Producer -
 func (g *GRPCRepo) Producer(srv proto.Pegasus_ProducerServer) error {
+	// TODO: Encapsulate this on it's own Job.
+	exit := false
+	done := srv.Context().Done()
+	req, err := srv.Recv()
+	if err != nil {
+		zap.L().Error(err.Error())
+		return err
+	}
+
+	topic, err := g.mgr.GetTopic(req.TopicName)
+	if err != nil {
+		zap.L().Error(err.Error())
+		return err
+	}
+
+	msg, err := message.FromRequest(req)
+	if err != nil {
+		zap.L().Error(err.Error())
+		return err
+	}
+
+	if err := topic.Send(msg); err != nil {
+		zap.L().Error(err.Error())
+		return err
+	}
+
+	for !exit {
+		select {
+		case <-done:
+			if err := srv.Context().Err(); err != nil {
+				zap.L().Error(err.Error())
+				return err
+			}
+			return nil
+		default:
+			req, err := srv.Recv()
+			if err != nil {
+				zap.L().Error(err.Error())
+				return err
+			}
+
+			msg, err := message.FromRequest(req)
+			if err != nil {
+				zap.L().Error(err.Error())
+				return err
+			}
+
+			if err := topic.Send(msg); err != nil {
+				zap.L().Error(err.Error())
+				return err
+			}
+		}
+	}
 	return nil
 }
